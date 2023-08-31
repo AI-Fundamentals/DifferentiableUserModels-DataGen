@@ -49,6 +49,8 @@ model = anp_ex1(
     args=args
 ) |> gpu
 
+#model = BSON.load("models/ex1/dp/dp_01_50/46.bson")[:model] |> gpu
+
 println("Initializing loss...")
 
 loss(xs...) = np_elbo(

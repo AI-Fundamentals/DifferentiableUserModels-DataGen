@@ -9,7 +9,6 @@ using .NeuralProcesses
 using BSON
 using CUDA
 using Flux
-using PyPlot
 using Printf
 using ProgressMeter
 using Stheno
@@ -99,7 +98,7 @@ _nanreport = Flux.throttle(() -> println("Encountered NaN loss! Returning zero."
 
 function _nansafe(loss, xs...)
     value, value_size = loss(xs...)
-    if isnan(value)
+    if isnan(value) || abs(value) > 1000000
         _nanreport()
         return Tracker.track(identity, 0f0), value_size
     else
@@ -141,7 +140,7 @@ function train_model!(
     lik_errors  = []
 
     # Clipping bound (<4)
-    c = 2.
+    c = 10.
     L = batches
     
     U = tasks_per_epoch * batches			
@@ -150,6 +149,7 @@ function train_model!(
 
     sig = get_sigma(eps, del, total_epochs * batches * batches_per_epoch, 1. / (batches * batches_per_epoch))
 
+    
     for batch_n in 1:batches-1
         # Warmup epoch
         if batch_n == starting_epoch
@@ -214,7 +214,10 @@ function train_model!(
 
             CUDA.reclaim()
 
-            # Save result.
+            # Save result
+
+	    BSON.bson("models/"*bson*"/"*string(epoch)*".bson", model=NeuralProcesses.untrack(model))
+	    """
             if !isnothing(bson)
                 checkpoint!(
                     "models/"*bson*"/"*string(epoch)*".bson",
@@ -224,6 +227,7 @@ function train_model!(
                     loss_error
                 )
             end
+	    """
         end
 
 	mkpath("results/"*bson)
