@@ -7,7 +7,7 @@ Essentially the same file as src/expeirment/experiment.jl in NeuralProcesses.jl 
 using .NeuralProcesses
 
 using BSON
-using CUDA
+#using CUDA
 using Flux
 using Printf
 using ProgressMeter

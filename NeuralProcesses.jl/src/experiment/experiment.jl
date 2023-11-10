@@ -5,7 +5,7 @@ export predict, loss, eval_model, train!, report_num_params, plot_task
 using ..NeuralProcesses
 
 using BSON
-using CUDA
+#using CUDA
 using Flux
 #using PyPlot
 using Printf

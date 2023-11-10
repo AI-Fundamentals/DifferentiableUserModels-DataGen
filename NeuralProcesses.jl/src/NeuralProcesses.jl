@@ -1,6 +1,6 @@
 module NeuralProcesses
 
-using CUDA
+#using CUDA
 using Distributions
 using Flux
 using LinearAlgebra
@@ -11,21 +11,21 @@ using Statistics
 using StatsBase
 using Tracker
 
-if CUDA.functional()
-    include("gpu.jl")
+#if CUDA.functional()
+#    include("gpu.jl")
+#
+#    randn_gpu = CUDA.randn
+#    zeros_gpu = CUDA.zeros
+#    ones_gpu = CUDA.ones
+#else
+const CuOrVector = Vector
+const CuOrMatrix = Matrix
+const CuOrArray = Array
 
-    randn_gpu = CUDA.randn
-    zeros_gpu = CUDA.zeros
-    ones_gpu = CUDA.ones
-else
-    const CuOrVector = Vector
-    const CuOrMatrix = Matrix
-    const CuOrArray = Array
-
-    randn_gpu = randn
-    zeros_gpu = zeros
-    ones_gpu = ones
-end
+randn_gpu = randn
+zeros_gpu = zeros
+ones_gpu = ones
+#end
 
 const AV = AbstractVector
 const AM = AbstractMatrix

@@ -1,8 +1,8 @@
-if CUDA.functional()
-    _cuda_log = CUDA.log
-else
-    _cuda_log = log
-end
+#if CUDA.functional()
+#    _cuda_log = CUDA.log
+#else
+#    _cuda_log = log
+#end
 
 """
     Fixed
@@ -17,7 +17,7 @@ struct Fixed
 end
 
 # Make `Fixed` compatible with Flux's mechanisms of moving things to and from the GPU.
-CUDA.cu(x::Fixed) = Fixed(CUDA.cu(x.x))
+#CUDA.cu(x::Fixed) = Fixed(CUDA.cu(x.x))
 Flux.adapt_storage(T::Type{<:Array}, x::Fixed) = Fixed(Flux.adapt(T, x.x))
 
 """

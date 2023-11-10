@@ -2,3 +2,33 @@
 /Manifest.toml
 *.swp
 
+# Julia files
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+
+# Build artifacts
+deps/
+build/
+
+# JLL Wrappers
+Artifacts.toml
+JLLWrappers/
+
+# Backup files
+*.bak
+*~
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+
+# results files
+results/
+
+# models
+*.bson
