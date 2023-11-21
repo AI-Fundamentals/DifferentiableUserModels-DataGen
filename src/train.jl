@@ -159,31 +159,30 @@ function train_model!(
         end
         # Generate data
         data = gen_batch(data_gen, n_mini_batches; eval=false)
-	
-	if experiment == "gridworld"
+    
+        if experiment == "gridworld"
             BSON.bson("data/ex1/"*string(batch_n)*".bson", data=data)
-	end
-	if experiment == "menu_search"
-	    BSON.bson("data/ex2/"*string(batch_n)*".bson", data=data)
-	end
-
+        end
+        if experiment == "menu_search"
+            BSON.bson("data/ex2/"*string(batch_n)*".bson", data=data)
+        end
     end
 
-    for epoch in starting_epoch:total_epochs
 
+    for epoch in starting_epoch:total_epochs
         for batch_n in 1:batches-1
             # Perform epoch.
             CUDA.reclaim()
             @time begin
                 ps = Flux.Params(Flux.params(model))
             
-	    if experiment == "gridworld"
-                data = BSON.load("data/ex1/"*string(batch_n)*".bson")[:data]
-            end
-	    if experiment == "menu_search"
-	        data = BSON.load("data/ex2/"*string(batch_n)*".bson")[:data]
-	    end
-
+                if experiment == "gridworld"
+                    data = BSON.load("data/ex1/"*string(batch_n)*".bson")[:data]
+                end
+                if experiment == "menu_search"
+                    data = BSON.load("data/ex2/"*string(batch_n)*".bson")[:data]
+                end
+    
                 @showprogress "Epoch $batch_n: " for d in data
                     gs = Tracker.gradient(ps) do
                         first(_nansafe(loss, model, batch_n, gpu.(d)...))
@@ -197,8 +196,8 @@ function train_model!(
                     end
                 end
             end
-
-            # Evalute model.
+    
+            # Evaluate model.
             CUDA.reclaim()
             loss_value, loss_error, lik_value, lik_error = eval_model!(
                 NeuralProcesses.untrack(model),
@@ -206,18 +205,17 @@ function train_model!(
                 data_gen,
                 batch_n
             )
-
+    
             push!(loss_means,  loss_value)
             push!(loss_errors, loss_error)
             push!(lik_means,   lik_value)
             push!(lik_errors,  lik_error)
-
+    
             CUDA.reclaim()
-
+    
             # Save result
-
-	    BSON.bson("models/"*bson*"/"*string(epoch)*".bson", model=NeuralProcesses.untrack(model))
-	    """
+            BSON.bson("models/"*bson*"/"*string(epoch)*".bson", model=NeuralProcesses.untrack(model))
+            """
             if !isnothing(bson)
                 checkpoint!(
                     "models/"*bson*"/"*string(epoch)*".bson",
@@ -227,14 +225,14 @@ function train_model!(
                     loss_error
                 )
             end
-	    """
+            """
         end
-
-	mkpath("results/"*bson)
-
+    
+        mkpath("results/"*bson)
+    
         BSON.bson("results/"*bson*".bson", loss_means=loss_means, loss_stds=loss_errors,
                                     lik_means=lik_means, lik_stds=lik_errors)
-
     end
+
 
 end
