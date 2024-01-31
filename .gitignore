@@ -32,3 +32,6 @@ results/
 
 # models
 *.bson
+
+# Data hdf files
+*.hdf
