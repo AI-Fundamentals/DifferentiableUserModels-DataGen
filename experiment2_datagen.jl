@@ -153,6 +153,12 @@ end
 
 
 # Save the data!
-filepath = "data/ex2/experiment2_data.hdf"
+folderpath = "data/ex2/"
+filepath = folderpath * "experiment2_data.hdf"
+
+if !isdir(folderpath)
+    mkpath(folderpath)
+end
+
 create_hdf5_ex2(data,filepath,metadata)
 (println("File saved successfully"),flush(stdout))
