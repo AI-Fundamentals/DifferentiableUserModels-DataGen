@@ -123,7 +123,7 @@ metadata = Dict(
 "gen_type" => "SearchEnvSampler / menu_search",
 "n_users" => n_users,
 "eval" => false,
-"n_traj" => "random(1-8), although this doesn't seem to be used", #This is what happens when it's set to 0 in args dictionary
+"n_traj" => "random(1-8)", #This is what happens when it's set to 0 in args dictionary
 "noise_variance" => 1e-8,
 "p_bias" => 0.0
 )
