@@ -14,7 +14,7 @@ using Distributed
 n_cores = Sys.CPU_THREADS
 # Leave one core for operating system. Comment this out if running on dedicated computing infrastructure
 n_workers = n_cores-1
-println("Setting up to run with $n_workers workers")
+(println("Setting up to run with $n_workers workers"),flush(stdout))
 
 # Remove all worker processes
 rmprocs(workers())
@@ -24,12 +24,13 @@ addprocs(n_workers)
 
 
 # The number of users to model
-n_users = 27
+n_users = 19200
 
 @everywhere begin
     # Sort out environment
     using Pkg
     Pkg.activate(".")
+    (println("Activated environment"),flush(stdout))
     Pkg.instantiate()
 end
 
@@ -74,6 +75,7 @@ end
 
     # Build the DataGenerator
     println("Initializing data generator")
+    flush(stdout)
     # We make the batch size 1 here, and batch the data when loading and training the model
     batch_size  = 1
     
@@ -93,17 +95,16 @@ end
                     num_target=num_target,
                     σ²=1e-8
                 )
-    println("Data gen initialized")
+    (println("Data gen initialized"),flush(stdout))
 
 end
 
 
 
 # Generate the data in a parallel way. The vector "data" will be the dataset from all users
-println("Starting generating data with $n_workers workers")
+(println("Starting generating data with $n_workers workers"),flush(stdout))
 data = @distributed (vcat) for user_n in 1:n_users;
-    println("Starting task $user_n")
-    flush(stdout)
+    (println("Starting task $user_n"),flush(stdout))
     
     # Generate data
     data = gen_batch(data_gen, 1; eval=false)
@@ -113,7 +114,7 @@ data = @distributed (vcat) for user_n in 1:n_users;
     data;
 end
 
-println("Finished generating data")
+(println("Finished generating data"),flush(stdout))
 
 
 
@@ -154,4 +155,4 @@ end
 # Save the data!
 filepath = "data/ex2/experiment2_data.hdf"
 create_hdf5_ex2(data,filepath,metadata)
-println("File saved successfully")
+(println("File saved successfully"),flush(stdout))
