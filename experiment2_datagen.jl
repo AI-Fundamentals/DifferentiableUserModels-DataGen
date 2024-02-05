@@ -11,7 +11,17 @@ using Distributed
 ## Add processes
 
 # Get the number of available cores
-n_cores = Sys.CPU_THREADS
+if haskey(ENV, "NSLOTS")
+    n_cores = parse(Int, ENV["NSLOTS"])
+    println("From SGE, $(n_cores) total cores.")
+else
+    n_cores = Sys.CPU_THREADS
+    println("From local system, $(n_cores) total cores.")
+end
+
+
+
+#n_cores = Sys.CPU_THREADS
 # Leave one core for operating system. Comment this out if running on dedicated computing infrastructure
 n_workers = n_cores-1
 (println("Setting up to run with $n_workers workers"),flush(stdout))
