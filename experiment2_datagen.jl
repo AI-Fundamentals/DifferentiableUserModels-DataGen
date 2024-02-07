@@ -33,9 +33,6 @@ rmprocs(workers())
 addprocs(n_workers)
 
 
-# The number of users to model
-n_users = 19200
-
 @everywhere begin
     # Sort out environment
     using Pkg
@@ -69,9 +66,9 @@ end
         defaults = Dict(
             "gen" => "menu_search",
             "n_traj" => 0,
-            "n_epochs" => 50,
-            "n_batches" => 25,
-            "batch_size" => 4,
+            #"n_epochs" => 50,
+            #"n_batches" => 25,
+            #"batch_size" => 4,
             "params" => false,
             "p_bias" => 0.0,
             "bson" => "",
@@ -86,8 +83,12 @@ end
     # Build the DataGenerator
     println("Initializing data generator")
     flush(stdout)
-    # We make the batch size 1 here, and batch the data when loading and training the model
-    batch_size  = 1
+    
+    # We make the batch size 4 here, for 4 users
+    batch_size = SharedArray{Int64}(1)
+    batch_size[1]  = 4
+    n_batches = SharedArray{Int64}(1)
+    n_batches[1] = 4800
     
     # Redundant. Required to fit the DataGenerator definition
     x_context = Distributions.Uniform(-2, 2)
@@ -98,7 +99,7 @@ end
     
     data_gen = NeuralProcesses.DataGenerator(
                     SearchEnvSampler(args;),
-                    batch_size=batch_size,
+                    batch_size=batch_size[1],
                     x_context=x_context,
                     x_target=x_target,
                     num_context=num_context,
@@ -109,16 +110,17 @@ end
 
 end
 
+n_users = n_batches[1]*batch_size[1]
+(println("Generating $(n_batches[1]) batches of size $(batch_size[1]), for a total of $n_users users"))
 
 
 # Generate the data in a parallel way. The vector "data" will be the dataset from all users
 (println("Starting generating data with $n_workers workers"),flush(stdout))
-data = @distributed (vcat) for user_n in 1:n_users;
-    (println("Starting task $user_n"),flush(stdout))
+data = @distributed (vcat) for batch_n in 1:n_batches[1];
+    (println("Starting batch $batch_n"),flush(stdout))
     
     # Generate data
     data = gen_batch(data_gen, 1; eval=false)
-    #data = gen_batch(data_gen, tasks_per_worker; eval=false)
     
     # Return the data from this worker to the "big" data array above
     data;
@@ -132,6 +134,8 @@ end
 metadata = Dict(
 "gen_type" => "SearchEnvSampler / menu_search",
 "n_users" => n_users,
+"n_minibatches" => n_batches[1],
+"batch_size" => batch_size[1],
 "eval" => false,
 "n_traj" => "random(1-8)", #This is what happens when it's set to 0 in args dictionary
 "noise_variance" => 1e-8,
@@ -142,21 +146,28 @@ metadata = Dict(
 function create_hdf5_ex2(data, filename, metadata)
     # Open the HDF5 file for writing, overwriting if it exists
     h5open(filename, "w") do fid
+        # Make one group for metadata
+        metadata_group = create_group(fid, "metadata")
+        
+        # Add metadata to the group
+        for (key, value) in metadata
+            write_attribute(metadata_group, key, value)
+        end
+
+        # Make a second group for data
+        data_group = create_group(fid, "data")
+
         # Loop over the data vector
         for (i, d) in enumerate(data)
+            subgroup = create_group(data_group, "batch_$i")
             # Create a group for each mini-batch
-            g = create_group(fid, "user_$i")
-
             # Add datasets to the group
-            g["xc"] = d[1]
-            g["yc"] = d[2]
-            g["xt"] = d[3]
-            g["yt"] = d[4]
+            subgroup["xc"] = d[1]
+            subgroup["yc"] = d[2]
+            subgroup["xt"] = d[3]
+            subgroup["yt"] = d[4]
 
-            # Add metadata to the group
-            for (key, value) in metadata
-                write_attribute(g, key, value)
-            end
+            
         end
     end
 end
