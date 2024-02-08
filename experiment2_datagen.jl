@@ -66,9 +66,6 @@ end
         defaults = Dict(
             "gen" => "menu_search",
             "n_traj" => 0,
-            #"n_epochs" => 50,
-            #"n_batches" => 25,
-            #"batch_size" => 4,
             "params" => false,
             "p_bias" => 0.0,
             "bson" => "",
