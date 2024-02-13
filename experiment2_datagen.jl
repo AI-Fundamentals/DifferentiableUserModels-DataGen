@@ -31,7 +31,7 @@ rmprocs(workers())
 
 # Add processes equal to the number of available cores minus one
 addprocs(n_workers)
-
+flush(stdout)
 
 @everywhere begin
     # Sort out environment
