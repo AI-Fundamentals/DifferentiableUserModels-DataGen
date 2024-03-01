@@ -118,7 +118,13 @@ data = @distributed (vcat) for batch_n in 1:n_batches[1];
     
     # Generate data
     data = gen_batch(data_gen, 1; eval=false)
-    
+
+    # Swap the dimensions of yc and yt so they work better in the neural process model
+    xc, yc, xt, yt = data[1]
+    yc = permutedims(yc, [2,1,3])
+    yt = permutedims(yt, [2,1,3])
+    data[1] = [xc,yc,xt,yt]
+
     # Return the data from this worker to the "big" data array above
     data;
 end
@@ -163,8 +169,6 @@ function create_hdf5_ex2(data, filename, metadata)
             subgroup["yc"] = d[2]
             subgroup["xt"] = d[3]
             subgroup["yt"] = d[4]
-
-            
         end
     end
 end
