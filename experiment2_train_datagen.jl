@@ -81,11 +81,9 @@ end
     println("Initializing data generator")
     flush(stdout)
     
-    # We make the batch size 4 here, for 4 users
-    batch_size = SharedArray{Int64}(1)
-    batch_size[1]  = 4
-    n_batches = SharedArray{Int64}(1)
-    n_batches[1] = 4800
+    # Edit this to change the number of users
+    n_users = SharedArray{Int64}(1)
+    n_users[1] = 64
     
     # Redundant. Required to fit the DataGenerator definition
     x_context = Distributions.Uniform(-2, 2)
@@ -96,7 +94,7 @@ end
     
     data_gen = NeuralProcesses.DataGenerator(
                     SearchEnvSampler(args;),
-                    batch_size=batch_size[1],
+                    batch_size=1,
                     x_context=x_context,
                     x_target=x_target,
                     num_context=num_context,
@@ -107,14 +105,13 @@ end
 
 end
 
-n_users = n_batches[1]*batch_size[1]
-(println("Generating $(n_batches[1]) batches of size $(batch_size[1]), for a total of $n_users users"))
+(println("Generating data for $(n_users[1]) users."))
 
 
 # Generate the data in a parallel way. The vector "data" will be the dataset from all users
 (println("Starting generating data with $n_workers workers"),flush(stdout))
-data = @distributed (vcat) for batch_n in 1:n_batches[1];
-    (println("Starting batch $batch_n"),flush(stdout))
+data = @distributed (vcat) for user_n in 1:n_users[1];
+    (println("Starting batch $user_n"),flush(stdout))
     
     # Generate data
     data = gen_batch(data_gen, 1; eval=false)
@@ -136,9 +133,7 @@ end
 # Add multiple pieces of metadata to the dataset   
 metadata = Dict(
 "gen_type" => "SearchEnvSampler / menu_search",
-"n_users" => n_users,
-"n_minibatches" => n_batches[1],
-"batch_size" => batch_size[1],
+"n_users" => n_users[1],
 "eval" => false,
 "n_traj" => "random(1-8)", #This is what happens when it's set to 0 in args dictionary
 "noise_variance" => 1e-8,
@@ -162,7 +157,7 @@ function create_hdf5_ex2(data, filename, metadata)
 
         # Loop over the data vector
         for (i, d) in enumerate(data)
-            subgroup = create_group(data_group, "batch_$i")
+            subgroup = create_group(data_group, "user_$i")
             # Create a group for each mini-batch
             # Add datasets to the group
             subgroup["xc"] = d[1]
