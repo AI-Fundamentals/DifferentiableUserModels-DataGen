@@ -1,9 +1,7 @@
-""" Script to generate data for experiment2.jl
-The original script generated was quite confused (and confusing) in terms of the number of the number of tasks/batches/minibatches.
-Originally the script created 768 tasks split up into 24 batches. It was supposed to be 800 from 25 batches but there was a typo.
-This calculation comes from an input of "2^5 (32) tasks_per_epoch" multiplied by 25 (actually 24) batches, where a batch is an arbitrary way
-to split the training dataset into separate files.
-In this implementation here, the training dataset is simply split into one HDF5 file 192 tasks, so the minibatches can be dealt with when training the model."""
+""" Script to generate evaluation data for experiment 2 to assess accuracy vs epochs.
+This is similar data to the training data in experiment2_train_datagen.jl
+By default the number of users is set to 64 for testing. To change the number of users, edit the "n_users" parameter."""
+
 
 # Run the script in parallel
 using Distributed
@@ -20,8 +18,6 @@ else
 end
 
 
-
-#n_cores = Sys.CPU_THREADS
 # Leave one core for operating system. Comment this out if running on dedicated computing infrastructure
 n_workers = n_cores-1
 (println("Setting up to run with $n_workers workers"),flush(stdout))
@@ -114,7 +110,7 @@ data = @distributed (vcat) for user_n in 1:n_users[1];
     (println("Starting batch $user_n"),flush(stdout))
     
     # Generate data
-    data = gen_batch(data_gen, 1; eval=false)
+    data = gen_batch(data_gen, 1; eval=true)
 
     # Swap the dimensions of yc and yt so they work better in the neural process model
     xc, yc, xt, yt = data[1]
@@ -134,7 +130,7 @@ end
 metadata = Dict(
 "gen_type" => "SearchEnvSampler / menu_search",
 "n_users" => n_users[1],
-"eval" => false,
+"eval" => true,
 "n_traj" => "random(1-8)", #This is what happens when it's set to 0 in args dictionary
 "noise_variance" => 1e-8,
 "p_bias" => 0.0
@@ -171,7 +167,7 @@ end
 
 # Save the data!
 folderpath = "data/ex2/"
-filepath = folderpath * "experiment2_training_data.hdf"
+filepath = folderpath * "ex2_eval_epoch_data.hdf"
 
 if !isdir(folderpath)
     mkpath(folderpath)
