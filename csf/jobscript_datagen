@@ -1,0 +1,45 @@
+#!/bin/bash --login
+ 
+# Job will run in the current directory (where you ran qsub)
+#$ -cwd
+ 
+# Request 32 CPU core
+#$ -pe smp.pe 32
+ 
+# Name the project name to datagen
+#$ -N datagen
+ 
+# Join output file to .o
+#$ -j y
+  
+# Load Julia 1.9.1
+module purge
+module load apps/binapps/julia/1.9.1
+echo "\n***Loaded Julia***\n"
+
+
+echo "\n***Running ex1_train_datagen.jl***\n"
+julia ex1_train_datagen.jl
+echo "\n***Finished running ex1_train_datagen.jl***\n"
+
+echo "\n***Running ex1_eval_datagen.jl***\n"
+julia ex1_eval_epochs_datagen.jl
+echo "\n***Finished running ex1_eval_datagen.jl***\n"
+
+echo "\n***Running ex1_eval_ntraj_datagen.jl***\n"
+julia ex1_eval_ntraj_datagen.jl
+echo "\n***Finished running ex1_eval_ntraj_datagen.jl***\n"
+
+echo "\n***Running ex2_train_datagen.jl***\n"
+julia ex2_train_datagen.jl
+echo "\n***Finished running ex2_train_datagen.jl***\n"
+
+echo "\n***Running ex2_eval_datagen.jl***\n"
+julia ex2_eval_epochs_datagen.jl
+echo "\n***Finished running ex2_eval_datagen.jl***\n"
+
+echo "\n***Running ex2_eval_ntraj_datagen.jl***\n"
+julia ex2_eval_ntraj_datagen.jl
+echo "\n***Finished running ex2_eval_ntraj_datagen.jl***\n"
+
+echo "\n***Jobscript completed successfully***\n"

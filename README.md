@@ -12,6 +12,11 @@ Users are expected to have some basic Julia knowledge. This is a general workflo
 6. Instantiate the environment using `instantiate`.
 7. Build the environment using `build`.
 8. Precompile the vironment using `precompile`.
+### CSF Instructions
+Instructions for running on University of Manchester CSF HPC system:
+1. Navigate to the `csf/` folder.
+2. Copy jobscripts and .toml files using `cp * ..`
+3. Navigate back to main folder with `cd ..` and run job scripts. 
 
 ### Julia environment debugging
 It is likely that somewhere in the steps above, there will be errors with one or more packages, as some packages need different versions on different systems. Most issues can be solved with the following steps:
