@@ -167,7 +167,7 @@ end
 
 # Save the data!
 folderpath = "data/ex2/"
-filepath = folderpath * "ex2_eval_epoch_data.hdf"
+filepath = folderpath * "ex2_eval_epochs_data.hdf"
 
 if !isdir(folderpath)
     mkpath(folderpath)
