@@ -3,15 +3,16 @@
 This repository contains a modified version of the code used to produce the results of the paper "Differentiable user models". The original version is located [here](https://github.com/hamalajaa/DifferentiableUserModels). In this version (which was not used in the original paper), the synthetic user data is generated and saved to an hdf5 file, but the data are not used to train a model. The main advantage of this repo is that a CUDA-enabled GPU is not required to generate the data.
 
 ### Julia environment setup
-Users are expected to have some basic Julia knowledge. This is a general workflow for getting the environment set up:  
-1. Browse to directory.
+Users are expected to have some basic Julia knowledge. This environment has been built on Mac Silicon using Julia 1.6.7 but has also been run on the University of Manchester CSF HPC system on Julia 1.9.1 (see below) This is a general workflow for getting the environment set up:  
+1. Navigate to directory.
 2. (Optional) If you are not using Julia 1.6.x on a Mac, remove the Manifest.toml file.
 3. Open the Julia REPL. 
 4. Open Julia and open the package manager using `]`.  
 5. Activate the current directory using `activate .` (note that you need the dot). This tells Julia to use the environment in the current directory.  
 6. Instantiate the environment using `instantiate`.
 7. Build the environment using `build`.
-8. Precompile the vironment using `precompile`.
+8. Precompile the environment using `precompile`.
+
 ### CSF Instructions
 Instructions for running on University of Manchester CSF HPC system:
 1. Navigate to the `csf/` folder.
@@ -26,6 +27,7 @@ It is likely that somewhere in the steps above, there will be errors with one or
 4. Try build and precompile steps above
 5. If you have any more errors, you could try remove the `Manifest.toml` file and start again.
 6. You could try remove the package and see if it runs without it
+7. Make sure `Distributions` is v0.24.18 as it seems to want to update itself to the latest version (which doesn't work)
 
 
 
