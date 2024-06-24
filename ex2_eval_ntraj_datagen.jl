@@ -168,7 +168,7 @@ end
 
 # Save the data!
 folderpath = "data/ex2/"
-filepath = folderpath * "experiment2_eval_ntraj_data_0.hdf"
+filepath = folderpath * "experiment2_eval_ntraj_data.hdf"
 
 if !isdir(folderpath)
     mkpath(folderpath)
