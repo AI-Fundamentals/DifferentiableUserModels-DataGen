@@ -78,7 +78,7 @@ end
     
     # Edit this to change the number of users
     n_users = SharedArray{Int64}(1)
-    n_users[1] = 5
+    n_users[1] = 2000
     
     # Redundant. Required to fit the DataGenerator definition
     x_context = Distributions.Uniform(-2, 2)
