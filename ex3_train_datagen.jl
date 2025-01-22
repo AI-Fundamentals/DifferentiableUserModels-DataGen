@@ -64,7 +64,7 @@ end
     # Not all of these are used in this script
     function get_default_args()
         defaults = Dict(
-            "gen" => "gridworld",
+            "gen" => "h_menu_search",
             "n_traj" => 0,
             "params" => false,
             "p_bias" => 0.0,
@@ -83,17 +83,17 @@ end
     
     # Edit this to change the number of users
     n_users = SharedArray{Int64}(1)
-    n_users[1] = 19200
+    n_users[1] = 5
     
     # Redundant. Required to fit the DataGenerator definition
     x_context = Distributions.Uniform(-2, 2)
     x_target  = Distributions.Uniform(-2, 2)
     
-    num_context = Distributions.DiscreteUniform(50, 50)
-    num_target  = Distributions.DiscreteUniform(50, 50)
+    num_context = Distributions.DiscreteUniform(10, 10)
+    num_target  = Distributions.DiscreteUniform(10, 10)
     
     data_gen = NeuralProcesses.DataGenerator(
-                    MCTSPlanner(args;),
+                    HierarchicalMenuSampler(args;),
                     batch_size=1,
                     x_context=x_context,
                     x_target=x_target,
@@ -132,7 +132,7 @@ end
 
 # Add multiple pieces of metadata to the dataset   
 metadata = Dict(
-"gen_type" => "MCTSPlanner / gridworld",
+"gen_type" => "HierarchicalMenuSampler / h_menu_search",
 "n_users" => n_users[1],
 "eval" => false,
 "n_traj" => "random(1-8)", #This is what happens when it's set to 0 in args dictionary
@@ -141,7 +141,7 @@ metadata = Dict(
 )
 
 # Function to save the data as HDF5
-function create_hdf5_ex1(data, filename, metadata)
+function create_hdf5_ex3(data, filename, metadata)
     # Open the HDF5 file for writing, overwriting if it exists
     h5open(filename, "w") do fid
         # Make one group for metadata
@@ -170,12 +170,12 @@ end
 
 
 # Save the data!
-folderpath = "data/ex1/"
-filepath = folderpath * "ex1_train_data.hdf"
+folderpath = "data/ex3/"
+filepath = folderpath * "ex3_train_data.hdf"
 
 if !isdir(folderpath)
     mkpath(folderpath)
 end
 
-create_hdf5_ex1(data,filepath,metadata)
+create_hdf5_ex3(data,filepath,metadata)
 (println("File saved successfully"),flush(stdout))
