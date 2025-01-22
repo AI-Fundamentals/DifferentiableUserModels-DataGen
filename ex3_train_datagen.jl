@@ -1,10 +1,5 @@
-""" Script to generate training data for experiment 1.
-The original script generated was quite (and confusing) in terms of the number of the number of tasks/batches/minibatches.
-Originally the script created 768 tasks split up into 24 batches. It was supposed to be 800 from 25 batches but there was a typo.
-This calculation comes from an input of "2^5 (32) tasks_per_epoch" multiplied by 25 (actually 24) batches, where a batch is an arbitrary way
-to split the training dataset into separate files.
-In this implementation here, the dataset is simply split into one HDF5 file of users (no batches), so the minibatches can be dealt with when training the model.
-By default the number of users is set to 64 for testing. To change the number of users, edit the "n_users" parameter."""
+""" Script to generate training data for experiment 3.
+This script is similar to the training scripts for experiments 1 and 2, but with the HierarchicalMenuSampler as the data generator."""
 
 
 # Run the script in parallel
