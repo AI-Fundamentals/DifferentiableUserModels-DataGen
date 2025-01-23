@@ -42,4 +42,8 @@ echo "\n***Running ex2_eval_ntraj_datagen.jl***\n"
 julia ex2_eval_ntraj_datagen.jl
 echo "\n***Finished running ex2_eval_ntraj_datagen.jl***\n"
 
+echo "\n***Running ex3_train_datagen.jl***\n"
+julia ex3_train_datagen.jl
+echo "\n***Finished running ex3_train_datagen.jl***\n"
+
 echo "\n***Jobscript completed successfully***\n"
