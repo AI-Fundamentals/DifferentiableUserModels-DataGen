@@ -130,7 +130,7 @@ metadata = Dict(
 "gen_type" => "HierarchicalMenuSampler / h_menu_search",
 "n_users" => n_users[1],
 "eval" => true,
-"n_traj" => "random(1-8)", #This is what happens when it's set to 0 in args dictionary
+"n_traj" => 10
 "noise_variance" => 1e-8,
 "p_bias" => 0.0
 )
