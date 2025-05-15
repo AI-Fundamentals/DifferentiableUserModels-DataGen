@@ -1,6 +1,6 @@
-""" Script to generate eval_ntraj data for experiment 3.
-This script is similar to the equivalent scripts for experiments 1 and 2, but with the HierarchicalMenuSampler as the data generator."""
-
+"""Script to generate validation data for experiment 3 to assess accuracy vs number of training epochs.
+This is similar data to the training data in experiment3_train_datagen.jl
+By default the number of users is set to 20000. To change the number of users, edit the "n_users" parameter."""
 
 # Run the script in parallel
 using Distributed
@@ -166,7 +166,7 @@ end
 
 # Save the data!
 folderpath = "data/ex3/"
-filepath = folderpath * "ex3_eval_epochs_data.hdf"
+filepath = folderpath * "ex3_val_data.hdf"
 
 if !isdir(folderpath)
     mkpath(folderpath)

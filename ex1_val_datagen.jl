@@ -1,7 +1,6 @@
-""" Script to generate evaluation data for experiment 2 to assess accuracy vs epochs.
-This is similar data to the training data in experiment2_train_datagen.jl
-By default the number of users is set to 64 for testing. To change the number of users, edit the "n_users" parameter."""
-
+"""Script to generate validation data for experiment 1 to assess accuracy vs number of training epochs.
+This is similar data to the training data in experiment1_train_datagen.jl
+By default the number of users is set to 19200. To change the number of users, edit the "n_users" parameter."""
 
 # Run the script in parallel
 using Distributed
@@ -60,7 +59,7 @@ end
     # Not all of these are used in this script
     function get_default_args()
         defaults = Dict(
-            "gen" => "menu_search",
+            "gen" => "gridworld",
             "n_traj" => 0,
             "params" => false,
             "p_bias" => 0.0,
@@ -85,11 +84,11 @@ end
     x_context = Distributions.Uniform(-2, 2)
     x_target  = Distributions.Uniform(-2, 2)
     
-    num_context = Distributions.DiscreteUniform(10, 10)
-    num_target  = Distributions.DiscreteUniform(10, 10)
+    num_context = Distributions.DiscreteUniform(50, 50)
+    num_target  = Distributions.DiscreteUniform(50, 50)
     
     data_gen = NeuralProcesses.DataGenerator(
-                    SearchEnvSampler(args;),
+                    MCTSPlanner(args;),
                     batch_size=1,
                     x_context=x_context,
                     x_target=x_target,
@@ -128,7 +127,7 @@ end
 
 # Add multiple pieces of metadata to the dataset   
 metadata = Dict(
-"gen_type" => "SearchEnvSampler / menu_search",
+"gen_type" => "MCTSPlanner / gridworld",
 "n_users" => n_users[1],
 "eval" => true,
 "n_traj" => "random(1-8)", #This is what happens when it's set to 0 in args dictionary
@@ -137,7 +136,7 @@ metadata = Dict(
 )
 
 # Function to save the data as HDF5
-function create_hdf5_ex2(data, filename, metadata)
+function create_hdf5_ex1(data, filename, metadata)
     # Open the HDF5 file for writing, overwriting if it exists
     h5open(filename, "w") do fid
         # Make one group for metadata
@@ -166,12 +165,12 @@ end
 
 
 # Save the data!
-folderpath = "data/ex2/"
-filepath = folderpath * "ex2_eval_epochs_data.hdf"
+folderpath = "data/ex1/"
+filepath = folderpath * "ex1_val_data.hdf"
 
 if !isdir(folderpath)
     mkpath(folderpath)
 end
 
-create_hdf5_ex2(data,filepath,metadata)
+create_hdf5_ex1(data,filepath,metadata)
 (println("File saved successfully"),flush(stdout))
