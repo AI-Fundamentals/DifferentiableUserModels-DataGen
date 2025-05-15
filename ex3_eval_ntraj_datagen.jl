@@ -1,6 +1,6 @@
-""" Script to generate evaluation data for experiment 2 to assess accuracy vs n_traj.
-This is similar data to the training data in experiment2_train_datagen.jl but with n_traj = 10.
-By default the number of users is set to 64 for testing. To change the number of users, edit the "n_users" parameter."""
+""" Script to generate eval_ntraj data for experiment 3.
+This script is similar to the equivalent scripts for experiments 1 and 2, but with the HierarchicalMenuSampler as the data generator."""
+
 
 # Run the script in parallel
 using Distributed
@@ -59,7 +59,7 @@ end
     # Not all of these are used in this script
     function get_default_args()
         defaults = Dict(
-            "gen" => "menu_search",
+            "gen" => "h_menu_search",
             "n_traj" => 10,
             "params" => false,
             "p_bias" => 0.0,
@@ -78,7 +78,7 @@ end
     
     # Edit this to change the number of users
     n_users = SharedArray{Int64}(1)
-    n_users[1] = 19200
+    n_users[1] = 5000
     
     # Redundant. Required to fit the DataGenerator definition
     x_context = Distributions.Uniform(-2, 2)
@@ -88,7 +88,7 @@ end
     num_target  = Distributions.DiscreteUniform(10, 10)
     
     data_gen = NeuralProcesses.DataGenerator(
-                    SearchEnvSampler(args;),
+                    HierarchicalMenuSampler(args;),
                     batch_size=1,
                     x_context=x_context,
                     x_target=x_target,
@@ -127,16 +127,16 @@ end
 
 # Add multiple pieces of metadata to the dataset   
 metadata = Dict(
-"gen_type" => "SearchEnvSampler / menu_search",
+"gen_type" => "HierarchicalMenuSampler / h_menu_search",
 "n_users" => n_users[1],
 "eval" => true,
-"n_traj" => 10,
+"n_traj" => 10
 "noise_variance" => 1e-8,
 "p_bias" => 0.0
 )
 
 # Function to save the data as HDF5
-function create_hdf5_ex2(data, filename, metadata)
+function create_hdf5_ex3(data, filename, metadata)
     # Open the HDF5 file for writing, overwriting if it exists
     h5open(filename, "w") do fid
         # Make one group for metadata
@@ -165,12 +165,12 @@ end
 
 
 # Save the data!
-folderpath = "data/ex2/"
-filepath = folderpath * "ex2_eval_ntraj_data.hdf"
+folderpath = "data/ex3/"
+filepath = folderpath * "ex3_eval_ntraj_data.hdf"
 
 if !isdir(folderpath)
     mkpath(folderpath)
 end
 
-create_hdf5_ex2(data,filepath,metadata)
+create_hdf5_ex3(data,filepath,metadata)
 (println("File saved successfully"),flush(stdout))
