@@ -1,7 +1,6 @@
-""" Script to generate evaluation data for experiment 2 to assess accuracy vs epochs.
+"""Script to generate validation data for experiment 2 to assess accuracy vs number of training epochs.
 This is similar data to the training data in experiment2_train_datagen.jl
-By default the number of users is set to 64 for testing. To change the number of users, edit the "n_users" parameter."""
-
+By default the number of users is set to 19200 for testing. To change the number of users, edit the "n_users" parameter."""
 
 # Run the script in parallel
 using Distributed
@@ -167,7 +166,7 @@ end
 
 # Save the data!
 folderpath = "data/ex2/"
-filepath = folderpath * "ex2_eval_epochs_data.hdf"
+filepath = folderpath * "ex2_val_data.hdf"
 
 if !isdir(folderpath)
     mkpath(folderpath)
